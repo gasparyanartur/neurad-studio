@@ -77,6 +77,7 @@ singularity exec --nv \
     --vis wandb \
     --experiment-name $name-$seq-$job_id-$task_id \
     $MAYBE_RESUME_CMD \
+    ${@:2} \
     ${dataset}-data \
     --data $dataset_root \
     --sequence $seq \
