@@ -3,7 +3,7 @@
 #SBATCH --gpus 1
 #SBATCH -c 32
 #SBATCH --mem 100G
-#SBATCH --output /staging/agp/masterthesis/nerf-thesis-shared/test/%A_%a.out
+#SBATCH --output /staging/agp/masterthesis/nerf-thesis-shared/shifts/%A_%a.out
 #SBATCH --array=1
 #SBATCH --job-name=neurad_shift
 #SBATCH --partition zprodlow
@@ -14,6 +14,8 @@ if [ -z ${configpath} ]; then
     echo "configpath not set. Exiting."
     exit 1;
 fi
+
+echo "Starting training with extra args ${@:1}"
 
 dataset=${DATASET:-pandaset}
 outputpath=${OUTPUTPATH:-renders}
@@ -41,8 +43,13 @@ singularity exec --nv \
     $image_path \
     python3.10 -u nerfstudio/scripts/render.py \
     $subcommand \
+    $MAYBE_RESUME_CMD \
+    ${@:1} \
     --load-config $configpath \
     --output-path $outputpath \
+    $DATAPARSER_ARGS
+    
+    
 
 #
 #EOF
